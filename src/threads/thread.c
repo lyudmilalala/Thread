@@ -363,6 +363,7 @@ thread_set_priority (int new_priority)
 {
   enum intr_level old_level;
   old_level = intr_disable ();
+  //thread_current ()->old_priority = thread_current ()->priority;	
   thread_current ()->priority = new_priority;
   list_sort(&ready_list, priority_sort, NULL);
   thread_yield();
@@ -575,26 +576,20 @@ priority_donate(struct lock *lock){
 	//lock_try_acquire(lock)
 	if(lock_try_acquire(lock)){ //current thread tries to acquire the lock
 	  	return;
-	   //lock_acquire_int(lock);
-	}//end if
-	else{
+	  // lock_acquire_int(lock);
+	}else{
 		//disable interrupts here
 		struct thread *holder = lock->holder;
 
 		// if(holder == 0) //check holder not 0
 		// 	lock_acquire_int(lock);
-		// 	//exit;	
-		
-		enum intr_level old_level;
-	        old_level = intr_disable ();
+		// 	//exit;
+
 		if(holder->priority < cur->priority){
 			holder->priority = cur->priority; //donate
 			lock_acquire_int(lock);
-		}//end if
-		intr_set_level (old_level);
-	
-	}//end else
-	
+		}
+		}
 }//end of priority_donate
 
 /* priority donation sequence, after lock is released the thread returns to its old priority before the donationhappened */
@@ -603,7 +598,7 @@ priority_return(struct lock *lock){
 	//set the priority to the old priority
 	//release lock
 	//return priority
-	//lock_release(lock);
+	lock_release(lock);
 	struct thread *cur = thread_current(); //set a current thread
 	cur->priority = cur->old_priority;
 }
