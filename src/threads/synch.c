@@ -281,7 +281,7 @@ lock_release (struct lock *lock)
   ASSERT (lock_held_by_current_thread (lock));
 
   lock->holder = NULL;
-  sema_up (&lock->semaphore);
+ // sema_up (&lock->semaphore);
 }
 
 /* Returns true if the current thread holds LOCK, false
