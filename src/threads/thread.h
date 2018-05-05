@@ -89,12 +89,13 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
-  int old_priority;                     /*save old priority for priority donation*/
+    int old_priority;                     /*save old priority for priority donation*/
+    bool donated_to; 
     struct list_elem allelem;           /* List element for all threads list. */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
-
+    struct list_elem lock_elem;              /* List lock_element. */
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
@@ -142,7 +143,7 @@ int thread_get_load_avg (void);
 static bool priority_sort (const struct list_elem *a_, const struct list_elem *b_, void *aux UNUSED); //added
 //static bool thread_get_lock (void);                                                                   //added
 void priority_donate(struct lock *lock); //added
-void priority_return(struct lock *lock); //added
+void priority_return(void); //added
 void set_priority (int new_priority, struct thread *thread);
 
 #endif /* threads/thread.h */
