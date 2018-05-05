@@ -30,6 +30,7 @@ static struct list ready_list;
 static struct list all_list;
 /* lock list */
 static struct list lock_list;
+static struct list old_priority_list;
 
 /* Idle thread. */
 static struct thread *idle_thread;
