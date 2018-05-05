@@ -97,7 +97,7 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   list_init (&lock_list);
-
+  list_init (&old_priority_list);
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
@@ -153,7 +153,8 @@ thread_print_stats (void)
           idle_ticks, kernel_ticks, user_ticks);
 }
 
-/* Creates a new kernel thread named NAME with the given initial
+/* 
+s a new kernel thread named NAME with the given initial
    , which executes FUNCTION passing AUX as the argument,
    and adds it to the ready queue.  Returns the thread identifier
    for the new thread, or TID_ERROR if creation fails.
@@ -371,6 +372,7 @@ thread_set_priority (int new_priority)
     int temp = thread_current ()->priority;
     thread_current ()->old_priority = temp;
     thread_current ()->priority = new_priority;
+    list_push_back (&old_priority_list,new_priority);
     list_sort(&ready_list, priority_sort, NULL);
     thread_yield();
   }//end else
@@ -388,6 +390,7 @@ set_priority (int new_priority, struct thread *thread)
   old_level = intr_disable ();
   thread->old_priority = new_priority;
   thread->priority = new_priority;
+  list_push_back (&old_priority_list,new_priority);
   list_sort(&ready_list, priority_sort, NULL);
   intr_set_level (old_level);
 
@@ -516,6 +519,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->old_priority = priority;
   t->priority = priority;
+  list_push_back (&old_priority_list,priority);
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
 }
@@ -614,7 +618,9 @@ priority_return(void){
 	//release lock
 	//return priority
 	struct thread *cur = thread_current(); //set a current thread
-	cur->priority = cur->old_priority;
+	if(!list_empty(&old_priority_list){
+		cur->priority = list_pop_back (&old_priority_list);
+	}
 	cur->donated_to = false;
 }
 
