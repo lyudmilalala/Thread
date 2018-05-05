@@ -92,7 +92,7 @@ struct thread
     int old_priority;                     /*save old priority for priority donation*/
     bool donated_to; 
     struct list_elem allelem;           /* List element for all threads list. */
-    struct list old_priority_list;           /* List element for all priority history. */
+    struct list_elem old_priority_list;           /* List element for all priority history. */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
