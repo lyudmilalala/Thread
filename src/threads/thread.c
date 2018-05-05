@@ -618,7 +618,7 @@ priority_return(void){
 	//release lock
 	//return priority
 	struct thread *cur = thread_current(); //set a current thread
-	if(!list_empty(&old_priority_list){
+	if(!list_empty(&old_priority_list)){
 		cur->priority = list_pop_back (&old_priority_list);
 	}
 	cur->donated_to = false;
